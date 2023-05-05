@@ -2,9 +2,10 @@ from pathlib import Path
 
 import pytorch_lightning as pl
 import torch
-from pytorch_lightning.metrics import MeanAbsoluteError
+
 import numpy as np
 import marching_cubes as mc
+from torchmetrics import MeanAbsoluteError
 
 from dataset.point_sdf_pair import PointSDFPairDataset
 from model.implicit import SimpleImplicitDecoder
@@ -78,7 +79,7 @@ def main():
     check_val_every_n_epoch = 10
     experiment = f"{datetime.now().strftime('%d%m%H%M')}"
 
-    checkpoint_callback = ModelCheckpoint(dirpath=(Path("runs") / experiment), filename='_ckpt_{epoch}', save_top_k=-1, verbose=False, period=save_epoch)
+    checkpoint_callback = ModelCheckpoint(dirpath=(Path("runs") / experiment), filename='_ckpt_{epoch}', save_top_k=-1, verbose=False, every_n_epochs=save_epoch)
     model = ImplicitTrainingModule()
     trainer = Trainer(gpus=[0], num_sanity_val_steps=1, val_check_interval=1.0, check_val_every_n_epoch=check_val_every_n_epoch, max_epochs=max_epoch, callbacks=[checkpoint_callback], benchmark=True)
     trainer.fit(model)
