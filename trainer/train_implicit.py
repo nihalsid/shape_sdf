@@ -42,7 +42,7 @@ class ImplicitTrainingModule(pl.LightningModule):
         predicted_sdf = self.forward(batch)
         self.mean_error(predicted_sdf, batch['sdf'])
 
-    def validation_epoch_end(self, _outputs):
+    def on_validation_epoch_end(self):
         print(f'\nError at step {self.global_step}: {self.mean_error.compute()}')
         self.mean_error.reset()
         self.visualize_prediction()
@@ -82,7 +82,7 @@ def main():
 
     checkpoint_callback = ModelCheckpoint(dirpath=(Path("runs") / experiment), filename='_ckpt_{epoch}', save_top_k=-1, verbose=False, every_n_epochs=save_epoch)
     model = ImplicitTrainingModule()
-    trainer = Trainer(gpus=[0], num_sanity_val_steps=0, val_check_interval=1.0, check_val_every_n_epoch=check_val_every_n_epoch, max_epochs=max_epoch, callbacks=[checkpoint_callback], benchmark=True)
+    trainer = Trainer(devices=[0], num_sanity_val_steps=0, val_check_interval=1.0, check_val_every_n_epoch=check_val_every_n_epoch, max_epochs=max_epoch, callbacks=[checkpoint_callback], benchmark=True)
     trainer.fit(model)
 
 
