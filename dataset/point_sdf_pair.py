@@ -10,7 +10,7 @@ class PointSDFPairDataset(Dataset):
         sample = np.load("data/hollow_knight.npz")
         self.points = sample["points"]
         self.sdf = sample["sdf"]
-        self.len = 250000
+        self.len = 500000
 
     def __len__(self):
         return self.len
